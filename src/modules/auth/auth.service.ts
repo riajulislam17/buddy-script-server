@@ -109,7 +109,7 @@ export class AuthService {
 
   serializeUser(user: User) {
     return {
-      id: user.id,
+      id: Number(user.id),
       firstName: user.firstName,
       lastName: user.lastName,
       email: user.email,

@@ -77,10 +77,14 @@ module.exports = {
     const indexNames = new Set(indexes.map((index) => index.name));
 
     if (!indexNames.has('unique_user_target_reaction')) {
-      await queryInterface.addIndex(tableName, ['userId', 'targetType', 'targetId'], {
-        unique: true,
-        name: 'unique_user_target_reaction',
-      });
+      await queryInterface.addIndex(
+        tableName,
+        ['userId', 'targetType', 'targetId'],
+        {
+          unique: true,
+          name: 'unique_user_target_reaction',
+        },
+      );
     }
 
     if (!indexNames.has('idx_target_type_target_id')) {

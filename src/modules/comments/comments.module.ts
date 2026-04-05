@@ -4,12 +4,12 @@ import { Comment } from '../../model/comment.model';
 import { Post } from '../../model/post.model';
 import { Reaction } from '../../model/reaction.model';
 import { User } from '../../model/user.model';
-import { ReactionsController } from './reactions.controller';
-import { ReactionsService } from './reactions.service';
+import { CommentsController } from './comments.controller';
+import { CommentsService } from './comments.service';
 
 @Module({
-  imports: [SequelizeModule.forFeature([Reaction, Post, Comment, User])],
-  controllers: [ReactionsController],
-  providers: [ReactionsService],
+  imports: [SequelizeModule.forFeature([Comment, Post, Reaction, User])],
+  controllers: [CommentsController],
+  providers: [CommentsService],
 })
-export class ReactionsModule {}
+export class CommentsModule {}

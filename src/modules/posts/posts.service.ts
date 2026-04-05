@@ -7,6 +7,7 @@ import { InjectModel } from '@nestjs/sequelize';
 import { Op, col, fn, WhereOptions } from 'sequelize';
 import { POST_VISIBILITY } from '../../common/constants/post.constant';
 import { REACTION_TARGET_TYPE } from '../../common/constants/reaction.constants';
+import { buildReactionSummaryMaps } from '../../common/helpers/reaction-summary.helper';
 import {
   decodeCursor,
   getNextCursor,
@@ -223,28 +224,13 @@ export class PostsService {
     const commentsCountMap = new Map(
       commentCounts.map((item) => [Number(item.postId), Number(item.count)]),
     );
-    const likesCountMap = new Map(
-      reactionCounts.map((item) => [Number(item.targetId), Number(item.count)]),
-    );
-    const currentReactionMap = new Map(
-      likedRows.map((item) => [Number(item.targetId), item.reactionType]),
-    );
-    const reactionUsersMap = new Map<
-      number,
-      ReturnType<typeof this.serializeReactionUser>[]
-    >();
-
-    for (const reaction of reactionUsers) {
-      const targetId = Number(reaction.targetId);
-      const users = reactionUsersMap.get(targetId) ?? [];
-
-      if (users.length >= 4 || !reaction.user) {
-        continue;
-      }
-
-      users.push(this.serializeReactionUser(reaction));
-      reactionUsersMap.set(targetId, users);
-    }
+    const { likesCountMap, currentReactionMap, reactionUsersMap } =
+      buildReactionSummaryMaps(
+        reactionCounts,
+        likedRows,
+        reactionUsers,
+        this.serializeReactionUser,
+      );
 
     const cursorItems = posts.map((post) => ({
       id: post.id,

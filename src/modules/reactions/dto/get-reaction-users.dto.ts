@@ -4,7 +4,7 @@ import { REACTION_TARGET_TYPE } from '../../../common/constants/reaction.constan
 
 export class GetReactionUsersDto {
   @IsIn(Object.values(REACTION_TARGET_TYPE))
-  targetType!: 'post' | 'comment' | 'reply';
+  targetType!: 'post' | 'comment';
 
   @Type(() => Number)
   @IsInt()

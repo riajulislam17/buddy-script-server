@@ -1,8 +1,6 @@
 import {
   BadRequestException,
-  ForbiddenException,
   Injectable,
-  NotFoundException,
 } from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
 import {
@@ -10,7 +8,12 @@ import {
   type ReactionTargetType,
   type ReactionType,
 } from '../../common/constants/reaction.constants';
+import {
+  getAccessibleCommentOrThrow,
+  getAccessiblePostOrThrow,
+} from '../../common/helpers/content-access.helper';
 import type { AuthUser } from '../../common/decorators/current-user.decorator';
+import { Comment } from '../../model/comment.model';
 import { Post } from '../../model/post.model';
 import { Reaction } from '../../model/reaction.model';
 import { User } from '../../model/user.model';
@@ -22,6 +25,7 @@ export class ReactionsService {
   constructor(
     @InjectModel(Reaction) private readonly reactionModel: typeof Reaction,
     @InjectModel(Post) private readonly postModel: typeof Post,
+    @InjectModel(Comment) private readonly commentModel: typeof Comment,
     @InjectModel(User) private readonly userModel: typeof User,
   ) {}
 
@@ -87,23 +91,22 @@ export class ReactionsService {
     targetType: ReactionTargetType,
     targetId: number,
   ) {
-    if (targetType !== REACTION_TARGET_TYPE.POST) {
-      throw new BadRequestException(
-        'This reaction target is not supported yet',
+    if (targetType === REACTION_TARGET_TYPE.POST) {
+      await getAccessiblePostOrThrow(this.postModel, user, targetId);
+      return;
+    }
+
+    if (targetType === REACTION_TARGET_TYPE.COMMENT) {
+      await getAccessibleCommentOrThrow(
+        this.commentModel,
+        this.postModel,
+        user,
+        targetId,
       );
+      return;
     }
 
-    const post = await this.postModel.findByPk(targetId);
-
-    if (!post) {
-      throw new NotFoundException('Post not found');
-    }
-
-    if (post.visibility === 'private' && post.userId !== user.id) {
-      throw new ForbiddenException(
-        'You cannot react to another user private post',
-      );
-    }
+    throw new BadRequestException('This reaction target is not supported yet');
   }
 
   private async getReactionUsersInternal(

@@ -10,7 +10,6 @@ import {
 } from 'sequelize-typescript';
 import { User } from './user.model';
 import { Post } from './post.model';
-import { Reply } from './reply.model';
 
 @Table({
   tableName: 'comments',
@@ -23,6 +22,14 @@ import { Reply } from './reply.model';
     {
       fields: ['userId'],
       name: 'idx_comments_user_id',
+    },
+    {
+      fields: ['parentId'],
+      name: 'idx_comments_parent_id',
+    },
+    {
+      fields: ['postId', 'parentId', 'createdAt', 'id'],
+      name: 'idx_comments_post_parent_created_at_id',
     },
   ],
 })
@@ -49,6 +56,14 @@ export class Comment extends Model<Comment> {
   })
   declare userId: number;
 
+  @ForeignKey(() => Comment)
+  @Index
+  @Column({
+    type: DataType.BIGINT,
+    allowNull: true,
+  })
+  declare parentId: number | null;
+
   @Column({
     type: DataType.TEXT,
     allowNull: false,
@@ -61,6 +76,15 @@ export class Comment extends Model<Comment> {
   @BelongsTo(() => User)
   declare user: User;
 
-  @HasMany(() => Reply)
-  declare replies: Reply[];
+  @BelongsTo(() => Comment, {
+    foreignKey: 'parentId',
+    as: 'parent',
+  })
+  declare parent?: Comment | null;
+
+  @HasMany(() => Comment, {
+    foreignKey: 'parentId',
+    as: 'replies',
+  })
+  declare replies: Comment[];
 }

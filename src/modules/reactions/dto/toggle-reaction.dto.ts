@@ -7,7 +7,7 @@ import {
 
 export class ToggleReactionDto {
   @IsIn(Object.values(REACTION_TARGET_TYPE))
-  targetType!: 'post' | 'comment' | 'reply';
+  targetType!: 'post' | 'comment';
 
   @Type(() => Number)
   @IsInt()

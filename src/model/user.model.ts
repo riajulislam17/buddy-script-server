@@ -43,10 +43,4 @@ export class User extends Model<User> {
     allowNull: true,
   })
   declare avatarUrl: string | null;
-
-  // @HasMany(() => Post)
-  // declare posts: Post[];
-
-  // @HasMany(() => Comment)
-  // declare comments: Comment[];
 }

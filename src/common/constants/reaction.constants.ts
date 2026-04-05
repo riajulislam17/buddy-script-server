@@ -1,7 +1,6 @@
 export const REACTION_TARGET_TYPE = {
   POST: 'post',
   COMMENT: 'comment',
-  REPLY: 'reply',
 } as const;
 
 export const REACTION_TYPE = {

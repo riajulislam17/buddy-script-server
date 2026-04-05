@@ -9,6 +9,7 @@ import { DATABASE_MODELS } from './model';
 
 // modules
 import { AuthModule } from './modules/auth/auth.module';
+import { CommentsModule } from './modules/comments/comments.module';
 import { PostsModule } from './modules/posts/posts.module';
 import { ReactionsModule } from './modules/reactions/reactions.module';
 import { UploadsModule } from './modules/uploads/uploads.module';
@@ -33,7 +34,7 @@ import { UploadsModule } from './modules/uploads/uploads.module';
         models: DATABASE_MODELS,
 
         autoLoadModels: false,
-        synchronize: true, // only for development/task submission
+        synchronize: true,
 
         logging: false,
         define: {
@@ -43,6 +44,7 @@ import { UploadsModule } from './modules/uploads/uploads.module';
     }),
 
     AuthModule,
+    CommentsModule,
     PostsModule,
     ReactionsModule,
     UploadsModule,
